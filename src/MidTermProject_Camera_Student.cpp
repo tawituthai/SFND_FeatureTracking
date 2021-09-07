@@ -56,7 +56,7 @@ int main(int argc, const char *argv[])
         cv::cvtColor(img, imgGray, cv::COLOR_BGR2GRAY);
 
         //// STUDENT ASSIGNMENT
-        //// TASK MP.1 -> replace the following code with ring buffer of size dataBufferSize
+        //// TASK MP.1 [Done] -> replace the following code with ring buffer of size dataBufferSize
         if (dataBuffer.size() > dataBufferSize - 1) {
             dataBuffer.erase(dataBuffer.begin());
         }
@@ -64,7 +64,6 @@ int main(int argc, const char *argv[])
         DataFrame frame;
         frame.cameraImg = imgGray;
         dataBuffer.push_back(frame);
-        std::cout << "Number of frame in buffer: " << dataBuffer.size() << std::endl;
 
         //// EOF STUDENT ASSIGNMENT
         cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;
