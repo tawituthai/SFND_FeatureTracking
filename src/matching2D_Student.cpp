@@ -175,6 +175,7 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
 {
     vector<cv::KeyPoint> kptsOutput;
     string windowName;  // For named window
+    cv::Ptr<cv::FeatureDetector> detector;
 
     if (detectorType.compare("FAST") == 0)
     {
@@ -182,55 +183,35 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
         int threshold = 30;
         bool bNMS = true;
         cv::FastFeatureDetector::DetectorType type = cv::FastFeatureDetector::TYPE_9_16; // TYPE_9_16, TYPE_7_12, TYPE_5_8
-        cv::Ptr<cv::FeatureDetector> detector = cv::FastFeatureDetector::create(threshold, bNMS, type);
-
-        double t = (double)cv::getTickCount();  // Start timer
-        detector->detect(img, kptsOutput);
-        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();    // Calculate time taken to detect keypoints
-        cout << "FAST with n= " << kptsOutput.size() << " keypoints in " << (1000*t)/1.0 << " ms" << endl;
-        windowName = "FAST Results";
+        detector = cv::FastFeatureDetector::create(threshold, bNMS, type);
     }
     else if (detectorType.compare("BRISK") == 0)
     {
-        cv::Ptr<cv::FeatureDetector> detector = cv::BRISK::create();
-        double t = (double)cv::getTickCount();  // Start timer
-        detector->detect(img, kptsOutput);
-        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();    // Calculate time taken to detect keypoints
-        cout << "BRISK with n= " << kptsOutput.size() << " keypoints in " << (1000*t)/1.0 << " ms" << endl;
-        windowName = "BRISK Results";
+        detector = cv::BRISK::create();
     }
     else if (detectorType.compare("ORB") == 0)
     {
-        cv::Ptr<cv::FeatureDetector> detector = cv::ORB::create();
-        double t = (double)cv::getTickCount();  // Start timer
-        detector->detect(img, kptsOutput);
-        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();    // Calculate time taken to detect keypoints
-        cout << "ORB with n= " << kptsOutput.size() << " keypoints in " << (1000*t)/1.0 << " ms" << endl;
-        windowName = "ORB Results";
+        detector = cv::ORB::create();
     }
     else if (detectorType.compare("AKAZE") == 0)
     {
-        cv::Ptr<cv::FeatureDetector> detector = cv::AKAZE::create();
-        double t = (double)cv::getTickCount();  // Start timer
-        detector->detect(img, kptsOutput);
-        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();    // Calculate time taken to detect keypoints
-        cout << "AKAZE with n= " << kptsOutput.size() << " keypoints in " << (1000*t)/1.0 << " ms" << endl;
-        windowName = "AKAZE Results";
+        detector = cv::AKAZE::create();
     }
     else if (detectorType.compare("SIFT") == 0)
     {
-        cv::Ptr<cv::FeatureDetector> detector = cv::SIFT::create();
-        double t = (double)cv::getTickCount();  // Start timer
-        detector->detect(img, kptsOutput);
-        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();    // Calculate time taken to detect keypoints
-        cout << "SIFT with n= " << kptsOutput.size() << " keypoints in " << (1000*t)/1.0 << " ms" << endl;
-        windowName = "SIFT Results";
+        detector = cv::SIFT::create();
     }
     else 
     {
         throw std::invalid_argument("Detector type not supported!");
     }
 
+    double t = (double)cv::getTickCount();  // Start timer
+    detector->detect(img, kptsOutput);
+    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();    // Calculate time taken to detect keypoints
+    cout << detectorType << " with n= " << kptsOutput.size() << " keypoints in " << (1000*t)/1.0 << " ms" << endl;
+    windowName = detectorType + " Results";
+    
     // visualize results
     if (bVis)
     {
