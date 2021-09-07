@@ -10,8 +10,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d.hpp>
-#include <opencv2/xfeatures2d.hpp>
-#include <opencv2/xfeatures2d/nonfree.hpp>
+// #include <opencv2/xfeatures2d.hpp>
+// #include <opencv2/xfeatures2d/nonfree.hpp>
 
 #include "dataStructures.h"
 #include "matching2D.hpp"
@@ -21,7 +21,6 @@ using namespace std;
 /* MAIN PROGRAM */
 int main(int argc, const char *argv[])
 {
-
     /* INIT VARIABLES AND DATA STRUCTURES */
 
     // data location
@@ -58,11 +57,14 @@ int main(int argc, const char *argv[])
 
         //// STUDENT ASSIGNMENT
         //// TASK MP.1 -> replace the following code with ring buffer of size dataBufferSize
-
+        if (dataBuffer.size() > dataBufferSize - 1) {
+            dataBuffer.erase(dataBuffer.begin());
+        }
         // push image into data frame buffer
         DataFrame frame;
         frame.cameraImg = imgGray;
         dataBuffer.push_back(frame);
+        std::cout << "Number of frame in buffer: " << dataBuffer.size() << std::endl;
 
         //// EOF STUDENT ASSIGNMENT
         cout << "#1 : LOAD IMAGE INTO BUFFER done" << endl;

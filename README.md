@@ -41,3 +41,33 @@ Then, add *C:\vcpkg\installed\x64-windows\bin* and *C:\vcpkg\installed\x64-windo
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./2D_feature_tracking`.
+
+
+## Make Visual Studio recognize OpenCV
+After install OpenCV successfully, you will have the following directory installed on your system (with default install path).
+
+- `/usr/local/bin` - executable files
+- `/usr/local/lib` - libraries (.so)
+- `/usr/local/cmake/opencv4` - cmake packages
+- `/usr/local/include/opencv4` - headers
+- `/usr/local/share/opencv4` - other files
+
+In Visual Studio Code:
+- Press `Ctrl+Shift+p` to bring up the drop-down menu.
+- Select `C/C++: Edit Configurations (UI)`
+- In `C/C++ Configurations` tab, in `Include path` section, put in OpenCV's header directory's path.
+- Put path to header file directory as `/usr/local/include/opencv4/**`, the preceeding `/**` tell the IDE to search for header files within the subfolders as well.
+
+| <img src="images/dropdown_cmd.png" width="640" height="640" /> | 
+|:--:| 
+| *Dropdown menu pop-up after press `Ctrl+Shift+p`* |
+
+| <img src="images/configurations_tab.png" width="640" height="640" /> | 
+|:--:| 
+| *In `Include path` section, add `/usr/local/include/opencv4/**`* |
+
+
+When done, you should be able to see a command list
+| <img src="images/cmd_pallete.png" width="622" height="350" /> | 
+|:--:| 
+| *command pallete* |

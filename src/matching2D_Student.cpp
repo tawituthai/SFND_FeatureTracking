@@ -32,6 +32,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
 
         // ...
     }
+
 }
 
 // Use one of several types of state-of-art descriptors to uniquely identify keypoints
