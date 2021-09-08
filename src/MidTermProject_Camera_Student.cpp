@@ -74,9 +74,9 @@ int main(int argc, const char *argv[])
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
         // string detectorType = "SHITOMASI";
-        string detectorType = "HARRIS";
+        // string detectorType = "HARRIS";
         // string detectorType = "BRISK";
-        // string detectorType = "ORB";
+        string detectorType = "ORB";
         // string detectorType = "AKAZE";
         // string detectorType = "SIFT";
 
@@ -100,7 +100,7 @@ int main(int argc, const char *argv[])
         //// EOF STUDENT ASSIGNMENT
 
         //// STUDENT ASSIGNMENT
-        //// TASK MP.3 -> only keep keypoints on the preceding vehicle
+        //// TASK MP.3 [Done] -> only keep keypoints on the preceding vehicle
 
         // only keep keypoints on the preceding vehicle
         bool bFocusOnVehicle = true;
@@ -118,6 +118,7 @@ int main(int argc, const char *argv[])
                     it++;                    
                 }
             }
+            cout << "number of keypoints in focus: " << keypoints.size() << endl; 
         }
         //// EOF STUDENT ASSIGNMENT
 
@@ -146,8 +147,10 @@ int main(int argc, const char *argv[])
         //// -> BRIEF, ORB, FREAK, AKAZE, SIFT
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
+        // string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
+        string descriptorType = "ORB"; // BRIEF, ORB, FREAK, AKAZE, SIFT
         descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
+        cout << "size of descriptor: " << descriptors.size() << endl;
         //// EOF STUDENT ASSIGNMENT
 
         // push descriptors for current frame to end of data buffer

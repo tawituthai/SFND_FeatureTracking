@@ -41,17 +41,49 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
     cv::Ptr<cv::DescriptorExtractor> extractor;
     if (descriptorType.compare("BRISK") == 0)
     {
-
+        // BRISK parameters
         int threshold = 30;        // FAST/AGAST detection threshold score.
         int octaves = 3;           // detection octaves (use 0 to do single scale)
         float patternScale = 1.0f; // apply this scale to the pattern used for sampling the neighbourhood of a keypoint.
 
         extractor = cv::BRISK::create(threshold, octaves, patternScale);
     }
-    else
+    else if (descriptorType.compare("ORB") == 0)
     {
+        // ORB parameters
+        int nfeatures = 500;
+        float scaleFactor = 1.2f;
+        int nlevels = 8;
+        int edgeThreashold = 31;
+        int firstLevel = 0;
+        int WTA_K = 2;
+        cv::ORB::ScoreType scoreType = cv::ORB::HARRIS_SCORE; // also cv::ORB::FAST_SCORE available
+        int patchSize = 31;
+        int fastThreshold = 20;
 
-        //...
+        extractor = cv::ORB::create(nfeatures, scaleFactor, nlevels, edgeThreashold,
+                                    firstLevel, WTA_K, scoreType, patchSize, fastThreshold);
+    }
+    else if (descriptorType.compare("AKAZE") == 0)
+    {
+        bool extended = false;
+        bool upright = false;
+        float threshold = 0.001f;
+        int nOctaves = 4;
+        int nOctaveLayers = 4;
+        cv::KAZE::DiffusivityType diffusivity = cv::KAZE::DIFF_PM_G2;
+
+        extractor = cv::KAZE::create(extended, upright, threshold, nOctaves, nOctaveLayers, diffusivity);
+    }
+    else if (descriptorType.compare("SIFT") == 0)
+    {
+        int nfeatures = 0;
+        int nOctaveLayers = 3;
+        double contrastThreshold = 0.04;
+        double edgeThreshold = 10;
+        double sigma = 1.6;
+
+        extractor = cv::SIFT::create(nfeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma);
     }
 
     // perform feature description
@@ -173,8 +205,7 @@ void detKeypointsHarris(vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis
 
 void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string detectorType, bool bVis)
 {
-    vector<cv::KeyPoint> kptsOutput;
-    string windowName;  // For named window
+    string windowName; // For named window
     cv::Ptr<cv::FeatureDetector> detector;
 
     if (detectorType.compare("FAST") == 0)
@@ -187,7 +218,11 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
     }
     else if (detectorType.compare("BRISK") == 0)
     {
-        detector = cv::BRISK::create();
+        int thresh = 30;
+        int octaves = 3;
+        float patternScale = 1.0f;
+
+        detector = cv::BRISK::create(thresh, octaves, patternScale);
     }
     else if (detectorType.compare("ORB") == 0)
     {
@@ -201,22 +236,22 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
     {
         detector = cv::SIFT::create();
     }
-    else 
+    else
     {
         throw std::invalid_argument("Detector type not supported!");
     }
 
-    double t = (double)cv::getTickCount();  // Start timer
-    detector->detect(img, kptsOutput);
-    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();    // Calculate time taken to detect keypoints
-    cout << detectorType << " with n= " << kptsOutput.size() << " keypoints in " << (1000*t)/1.0 << " ms" << endl;
+    double t = (double)cv::getTickCount(); // Start timer
+    detector->detect(img, keypoints);
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency(); // Calculate time taken to detect keypoints
+    cout << detectorType << " with n= " << keypoints.size() << " keypoints in " << (1000 * t) / 1.0 << " ms" << endl;
     windowName = detectorType + " Results";
-    
+
     // visualize results
     if (bVis)
     {
         cv::Mat visImage = img.clone();
-        cv::drawKeypoints(img, kptsOutput, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
         cv::namedWindow(windowName, 6);
         imshow(windowName, visImage);
         cv::waitKey(0);
