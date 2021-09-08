@@ -36,12 +36,45 @@ Then, add *C:\vcpkg\installed\x64-windows\bin* and *C:\vcpkg\installed\x64-windo
 
 
 ## Basic Build Instructions
-
 1. Clone this repo.
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./2D_feature_tracking`.
 
+## Install OpenCV on Ubuntu machine
+Steps to install are taken from [here](https://docs.opencv.org/master/d7/d9f/tutorial_linux_install.html), since we are going to use some algorithms from `xfeatures2d.hpp` and `xfeatures2d/nonfree.hpp` an additional flags need to be set.
+
+```
+# Download and unpack sources
+wget -O opencv.zip https://github.com/opencv/opencv/archive/master.zip
+wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/master.zip
+unzip opencv.zip
+unzip opencv_contrib.zip
+
+# Create build directory and switch into it
+mkdir -p build && cd build
+
+# Configure, need to set flag for non-free, and contrib (extra module)
+# --Note-- Check note below.
+cmake -DOPENCV_ENABLE_NONFREE=ON -DOPENCV_EXTRA_MODULES_PATH=../opencv_contrib-master/modules ../opencv-master
+
+# Build (this step will take quite long)
+cmake --build .
+make -j8
+
+# Install
+sudo make install
+```
+
+In configure step, make sure to check an output message. It should show something similar to the following lines.
+```
+<some other messages>
+...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/xxx/Documents/Udacity/build
+```
+If not, you problably missing some required libraries. Read through the output messages to figure out what's missing, then delete and create another build directory and try to run the configure command again.
 
 ## Make Visual Studio recognize OpenCV
 After install OpenCV successfully, you will have the following directory installed on your system (with default install path).
