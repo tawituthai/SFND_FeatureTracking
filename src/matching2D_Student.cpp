@@ -5,32 +5,62 @@ using namespace std;
 
 // Find best matches for keypoints in two camera images based on several matching methods
 void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::KeyPoint> &kPtsRef, cv::Mat &descSource, cv::Mat &descRef,
-                      std::vector<cv::DMatch> &matches, std::string descriptorType, std::string matcherType, std::string selectorType)
+                      std::vector<cv::DMatch> &matches, std::string descriptorFamily, std::string matcherType, std::string selectorType)
 {
     // configure matcher
     bool crossCheck = false;
     cv::Ptr<cv::DescriptorMatcher> matcher;
 
+    // Brute force
     if (matcherType.compare("MAT_BF") == 0)
     {
-        int normType = cv::NORM_HAMMING;
+        // normType need to be cv::NORM_HAMMING only for Binary Descriptor family, else
+        // use cv::NORM_L2
+        int normType = descriptorFamily.compare("DES_BINARY") == 0 ? cv::NORM_HAMMING : cv::NORM_L2;
         matcher = cv::BFMatcher::create(normType, crossCheck);
+        cout << "BF matching with cross-check = " << crossCheck;
     }
+    // FLANN -- For Binary descriptor
     else if (matcherType.compare("MAT_FLANN") == 0)
     {
-        // ...
+        // Convert descriptor to floating point
+        if (descSource.type() != CV_32F || descRef.type() != CV_32F)
+        {
+            descSource.convertTo(descSource, CV_32F);
+            descRef.convertTo(descRef, CV_32F);
+        }
+        matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
+        cout << "FLANN matching";
     }
 
     // perform matching task
     if (selectorType.compare("SEL_NN") == 0)
-    { // nearest neighbor (best match)
+    { // NN: nearest neighbor (best match)
 
+        double t = (double) cv::getTickCount();
         matcher->match(descSource, descRef, matches); // Finds the best match for each descriptor in desc1
+        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+        cout << " (NN) with n = " << matches.size() << " took " << (1000 * t) / 1.0f << " ms." << endl;
     }
     else if (selectorType.compare("SEL_KNN") == 0)
     { // k nearest neighbors (k=2)
 
-        // ...
+        vector<vector<cv::DMatch>> knn_matches;
+        double t = (double) cv::getTickCount();
+        matcher->knnMatch(descSource, descRef, knn_matches, 2); // finds the 2 best matches.
+        t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
+        cout << " (KNN) with n = " << knn_matches.size() << " took " << (1000 * t) / 1.0f << " ms." << endl;
+
+        // filter matches using descriptor distance ration test
+        double minDescDistRatio = 0.8;
+        for (auto it = knn_matches.begin(); it != knn_matches.end(); ++it)
+        {
+            if((*it)[0].distance < minDescDistRatio * (*it)[1].distance)
+            {
+                matches.push_back((*it)[0]);
+            }
+        }
+        cout << "# keypoints removed: " << (knn_matches.size() - matches.size()) << endl;
     }
 }
 
@@ -98,10 +128,10 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
         bool scaleNormalized = true;
         float patternScale = 22.0f;
         int nOcataves = 4;
-        const std::vector<int>& selectedPairs = std::vector<int>();
+        const std::vector<int> &selectedPairs = std::vector<int>();
 
         extractor = cv::xfeatures2d::FREAK::create(orientationNormalized, scaleNormalized,
-                                                    patternScale, nOcataves, selectedPairs);
+                                                   patternScale, nOcataves, selectedPairs);
     }
     else
     {
