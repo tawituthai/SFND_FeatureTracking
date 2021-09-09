@@ -1,40 +1,5 @@
 # SFND 2D Feature Tracking
 
-<img src="images/keypoints.png" width="820" height="248" />
-
-The idea of the camera course is to build a collision detection system - that's the overall goal for the Final Project. As a preparation for this, you will now build the feature tracking part and test various detector / descriptor combinations to see which ones perform best. This mid-term project consists of four parts:
-
-* First, you will focus on loading images, setting up data structures and putting everything into a ring buffer to optimize memory load. 
-* Then, you will integrate several keypoint detectors such as HARRIS, FAST, BRISK and SIFT and compare them with regard to number of keypoints and speed. 
-* In the next part, you will then focus on descriptor extraction and matching using brute force and also the FLANN approach we discussed in the previous lesson. 
-* In the last part, once the code framework is complete, you will test the various algorithms in different combinations and compare them with regard to some performance measures. 
-
-See the classroom instruction and code comments for more details on each of these parts. Once you are finished with this project, the keypoint matching part will be set up and you can proceed to the next lesson, where the focus is on integrating Lidar points and on object detection using deep-learning. 
-
-## Dependencies for Running Locally
-1. cmake >= 2.8
- * All OSes: [click here for installation instructions](https://cmake.org/install/)
-
-2. make >= 4.1 (Linux, Mac), 3.81 (Windows)
- * Linux: make is installed by default on most Linux distros
- * Mac: [install Xcode command line tools to get make](https://developer.apple.com/xcode/features/)
- * Windows: [Click here for installation instructions](http://gnuwin32.sourceforge.net/packages/make.htm)
-
-3. OpenCV >= 4.1
- * All OSes: refer to the [official instructions](https://docs.opencv.org/master/df/d65/tutorial_table_of_content_introduction.html)
- * This must be compiled from source using the `-D OPENCV_ENABLE_NONFREE=ON` cmake flag for testing the SIFT and SURF detectors. If using [homebrew](https://brew.sh/): `$> brew install --build-from-source opencv` will install required dependencies and compile opencv with the `opencv_contrib` module by default (no need to set `-DOPENCV_ENABLE_NONFREE=ON` manually). 
- * The OpenCV 4.1.0 source code can be found [here](https://github.com/opencv/opencv/tree/4.1.0)
-
-4. gcc/g++ >= 5.4
-  * Linux: gcc / g++ is installed by default on most Linux distros
-  * Mac: same deal as make - [install Xcode command line tools](https://developer.apple.com/xcode/features/)
-  * Windows: recommend using either [MinGW-w64](http://mingw-w64.org/doku.php/start) or [Microsoft's VCPKG, a C++ package manager](https://docs.microsoft.com/en-us/cpp/build/install-vcpkg?view=msvc-160&tabs=windows). VCPKG maintains its own binary distributions of OpenCV and many other packages. To see what packages are available, type `vcpkg search` at the command prompt. For example, once you've _VCPKG_ installed, you can install _OpenCV 4.1_ with the command:
-```bash
-c:\vcpkg> vcpkg install opencv4[nonfree,contrib]:x64-windows
-```
-Then, add *C:\vcpkg\installed\x64-windows\bin* and *C:\vcpkg\installed\x64-windows\debug\bin* to your user's _PATH_ variable. Also, set the _CMake Toolchain File_ to *c:\vcpkg\scripts\buildsystems\vcpkg.cmake*.
-
-
 ## Basic Build Instructions
 1. Clone this repo.
 2. Make a build directory in the top level directory: `mkdir build && cd build`
@@ -104,3 +69,118 @@ When done, you should be able to see a command list
 | <img src="images/cmd_pallete.png" width="622" height="350" /> | 
 |:--:| 
 | *command pallete* |
+
+## Comparing Detector performance
+### Shi-Tomasi Detector
+**Note :** Keypoints are dense and distributed across the frame.
+| <img src="images/Detector_ShiTomasi.png" width="627" height="214" /> | 
+|:--:| 
+| *Shi-Tomasi Detector* |
+
+| frame | in focus / overall frame| time taken (ms) |
+| :---: | :---: | :---: |
+| 1 | 125 / 1,370  | 12.2891  |
+| 2 | 118 / 1,301  | 10.5040  |
+| 3 | 123 / 1,361  | 12.1816  |
+| 4 | 120 / 1,358  | 25.8814  |
+| 5 | 120 / 1,333  | 26.3410  |
+| 6 | 112 / 1,284  | 10.3645  |
+| 7 | 114 / 1,322  | 12.6713  |
+| 8 | 123 / 1,366  | 26.7295  |
+| 9 | 111 / 1,389  | 10.3175  |
+| 10 | 112/ 1,339  | 23.3157  |
+
+### Harris Detector
+**Note :** Provide very few keypoints compare to other methods.
+| <img src="images/Detector_Harris.png" width="627" height="214" /> | 
+|:--:| 
+| *Harris Detector* |
+
+| frame | in focus / overall frame| time taken (ms) |
+| :---: | :---: | :---: |
+| 1 | 17 / 115  | 13.1214  |
+| 2 | 14 / 98   | 9.98241  |
+| 3 | 18 / 113  | 9.41177  |
+| 4 | 21 / 121  | 11.7941  |
+| 5 | 26 / 160  | 19.0837  |
+| 6 | 43 / 383  | 21.7991  |
+| 7 | 18 / 85   | 10.3319  |
+| 8 | 31 / 210  | 13.4019  |
+| 9 | 26 / 171  | 10.8883  |
+| 10 | 34 / 281 | 14.1609  |
+
+### BRISK Detector
+**Note :** Provide dense keypoints with different sizes and lots of overlapping. Many keypoints are on feature like overhead bridge and trees, which is irrelevant to us.
+| <img src="images/Detector_BRISK.png" width="627" height="214" /> | 
+|:--:| 
+| *BRISK Detector* |
+
+| frame | in focus / overall frame| time taken (ms) |
+| :---: | :---: | :---: |
+| 1 | 264 / 2,754  | 34.4952 |
+| 2 | 282 / 2,777  | 33.5084 |
+| 3 | 282 / 2,741  | 35.5564 |
+| 4 | 277 / 2,735  | 33.5147 |
+| 5 | 297 / 2,757  | 32.6085 |
+| 6 | 279 / 2,695  | 32.7244 |
+| 7 | 289 / 2,715  | 32.6185 |
+| 8 | 272 / 2,628  | 31.9206 |
+| 9 | 266 / 2,639  | 32.1965 |
+| 10 | 254 / 2,672  | 31.9817 |
+
+### ORB Detector
+**Note :** Majority of keypoints are overlapping and have about the same size. Good amount of keypoints are in our focus area (more than 20%).
+| <img src="images/Detector_ORB.png" width="627" height="214" /> | 
+|:--:| 
+| *ORB Detector* |
+
+| frame | in focus / overall frame| time taken (ms) |
+| :---: | :---: | :---: |
+| 1 | 92 / 500  | 97.0611 |
+| 2 | 102 / 500 | 5.69152 |
+| 3 | 106 / 500 | 5.91319 |
+| 4 | 113 / 500 | 5.91422 |
+| 5 | 109 / 500 | 5.91738 |
+| 6 | 125 / 500 | 6.58725 |
+| 7 | 130 / 500 | 5.82986 |
+| 8 | 129 / 500 | 5.75667 |
+| 9 | 127 / 500 | 6.22600 |
+| 10 | 128 / 500 | 6.42212|
+
+### AKAZE Detector
+**Note :** Keypoints are distribute evenly across the frame, not many of them overlapping. Most of the keypoints have the same size.
+| <img src="images/Detector_AKAZE.png" width="627" height="214" /> | 
+|:--:| 
+| *AKAZE Detector* |
+
+| frame | in focus / overall frame| time taken (ms) |
+| :---: | :---: | :---: |
+| 1 | 166 / 1,351  | 49.1474 |
+| 2 | 157 / 1,327  | 46.4223 |
+| 3 | 161 / 1,311  | 57.9569 |
+| 4 | 155 / 1,351  | 55.1364 |
+| 5 | 163 / 1,360  | 45.0736 |
+| 6 | 164 / 1,347  | 45.2190 |
+| 7 | 173 / 1,363  | 47.7028 |
+| 8 | 175 / 1,331  | 50.1518 |
+| 9 | 177 / 1,358  | 45.2005 |
+| 10 | 179 / 1,331 | 47.6290 |
+
+### SIFT Detector
+**Note :** Keypoint are of the difference size, few of them are overlapping.
+| <img src="images/Detector_SIFT.png" width="627" height="214" /> | 
+|:--:| 
+| *SIFT Detector* |
+
+| frame | in focus / overall frame| time taken (ms) |
+| :---: | :---: | :---: |
+| 1 | 138 / 1,438 | 96.0854 |
+| 2 | 132 / 1,371 | 75.8349 |
+| 3 | 124 / 1,380 | 76.8312 |
+| 4 | 137 / 1,335 | 73.9495 |
+| 5 | 134 / 1,305 | 75.2970 |
+| 6 | 140 / 1,369 | 76.7962 |
+| 7 | 137 / 1,396 | 93.4424 |
+| 8 | 148 / 1,382 | 77.3562 |
+| 9 | 159 / 1,463 | 77.3701 |
+| 10 | 137 / 1,422| 76.7884 |

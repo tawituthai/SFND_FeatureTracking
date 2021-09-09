@@ -90,11 +90,11 @@ int main(int argc, const char *argv[])
         }
         else if (detectorType.compare("HARRIS") == 0)
         {
-            detKeypointsHarris(keypoints, imgGray, false);
+            detKeypointsHarris(keypoints, imgGray, true);
         }
         else {
             // BRISK, ORB, AKAZE, SIFT
-            detKeypointsModern(keypoints, imgGray, detectorType, false);
+            detKeypointsModern(keypoints, imgGray, detectorType, true);
         }
         
         //// EOF STUDENT ASSIGNMENT
@@ -147,8 +147,8 @@ int main(int argc, const char *argv[])
         //// -> BRIEF, ORB, FREAK, AKAZE, SIFT
 
         cv::Mat descriptors;
-        // string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
-        string descriptorType = "ORB"; // BRIEF, ORB, FREAK, AKAZE, SIFT
+        string descriptorType = "BRISK"; // BRIEF, ORB, FREAK, AKAZE, SIFT
+        // string descriptorType = "ORB"; // BRIEF, ORB, FREAK, AKAZE, SIFT
         descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
         cout << "size of descriptor: " << descriptors.size() << endl;
         //// EOF STUDENT ASSIGNMENT
@@ -164,13 +164,13 @@ int main(int argc, const char *argv[])
             /* MATCH KEYPOINT DESCRIPTORS */
 
             vector<cv::DMatch> matches;
-            string matcherType = "MAT_FLANN";           // MAT_BF, MAT_FLANN
+            string matcherType = "MAT_BF";           // MAT_BF, MAT_FLANN
             string descriptorFamily = "DES_BINARY";     // DES_BINARY, DES_HOG -- Only care if use MAT_BF
-            string selectorType = "SEL_NN";             // SEL_NN, SEL_KNN
+            string selectorType = "SEL_KNN";             // SEL_NN, SEL_KNN
 
             //// STUDENT ASSIGNMENT
-            //// TASK MP.5 -> add FLANN matching in file matching2D.cpp
-            //// TASK MP.6 -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
+            //// TASK MP.5 [Done] -> add FLANN matching in file matching2D.cpp
+            //// TASK MP.6 [Done] -> add KNN match selection and perform descriptor distance ratio filtering with t=0.8 in file matching2D.cpp
 
             matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
                              (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
@@ -184,7 +184,7 @@ int main(int argc, const char *argv[])
             cout << "#4 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
-            bVis = true;
+            bVis = false;
             if (bVis)
             {
                 cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
