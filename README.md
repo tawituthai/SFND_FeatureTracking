@@ -42,7 +42,7 @@ Then, add *C:\vcpkg\installed\x64-windows\bin* and *C:\vcpkg\installed\x64-windo
 4. Run it: `./2D_feature_tracking`.
 
 ## Install OpenCV on Ubuntu machine
-Steps to install are taken from [here](https://docs.opencv.org/master/d7/d9f/tutorial_linux_install.html), since we are going to use some algorithms from `xfeatures2d.hpp` and `xfeatures2d/nonfree.hpp` an additional flags need to be set.
+Steps to install are taken from [OpenCV's official instructions](https://docs.opencv.org/master/d7/d9f/tutorial_linux_install.html), but since we are going to use some algorithms from `xfeatures2d.hpp` and `xfeatures2d/nonfree.hpp` an additional flags need to be set.
 
 ```
 # Download and unpack sources

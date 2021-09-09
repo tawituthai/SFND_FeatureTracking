@@ -85,6 +85,29 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
 
         extractor = cv::SIFT::create(nfeatures, nOctaveLayers, contrastThreshold, edgeThreshold, sigma);
     }
+    else if (descriptorType.compare("BRIEF") == 0)
+    {
+        int bytes = 32;
+        bool use_orientation = false;
+
+        extractor = cv::xfeatures2d::BriefDescriptorExtractor::create(bytes, use_orientation);
+    }
+    else if (descriptorType.compare("FREAK") == 0)
+    {
+        bool orientationNormalized = true;
+        bool scaleNormalized = true;
+        float patternScale = 22.0f;
+        int nOcataves = 4;
+        const std::vector<int>& selectedPairs = std::vector<int>();
+
+        extractor = cv::xfeatures2d::FREAK::create(orientationNormalized, scaleNormalized,
+                                                    patternScale, nOcataves, selectedPairs);
+    }
+    else
+    {
+        cout << "Descriptor type requested: " << descriptorType << endl;
+        throw std::invalid_argument("Descriptor type not supported!");
+    }
 
     // perform feature description
     double t = (double)cv::getTickCount();
@@ -238,6 +261,7 @@ void detKeypointsModern(std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, std:
     }
     else
     {
+        cout << "Detector type requested: " << detectorType << endl;
         throw std::invalid_argument("Detector type not supported!");
     }
 
