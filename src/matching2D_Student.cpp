@@ -60,7 +60,8 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
                 matches.push_back((*it)[0]);
             }
         }
-        cout << "# keypoints removed: " << (knn_matches.size() - matches.size()) << endl;
+        // cout << "# keypoints removed: " << (knn_matches.size() - matches.size()) << endl;
+        cout << "# keypoints match after filter: " << matches.size() << endl;
     }
 }
 
@@ -103,8 +104,8 @@ void descKeypoints(vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &descr
         int nOctaveLayers = 4;
         cv::KAZE::DiffusivityType diffusivity = cv::KAZE::DIFF_PM_G2;
 
-        extractor = cv::KAZE::create(extended, upright, threshold, nOctaves, nOctaveLayers, diffusivity);
-    }
+        extractor = cv::AKAZE::create();
+    }   
     else if (descriptorType.compare("SIFT") == 0)
     {
         int nfeatures = 0;

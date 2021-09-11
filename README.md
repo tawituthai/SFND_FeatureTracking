@@ -71,6 +71,9 @@ When done, you should be able to see a command list
 | *command pallete* |
 
 ## Comparing Detector performance
+### Summary
+When consider a result from difference detector applied on the same set of images, we can see that `ORB detector` provide the highest ratio of keypoints within our focus area versus the whole frame (around 20%), and also taken shortest amount of time required (except only the first frame).
+
 ### Shi-Tomasi Detector
 **Note :** Keypoints are dense and distributed across the frame.
 | <img src="images/Detector_ShiTomasi.png" width="627" height="214" /> | 
@@ -184,3 +187,50 @@ When done, you should be able to see a command list
 | 8 | 148 / 1,382 | 77.3562 |
 | 9 | 159 / 1,463 | 77.3701 |
 | 10 | 137 / 1,422| 76.7884 |
+
+## Compare Detector & Descriptor pair
+Number of matched keypoints and descriptor extraction time from various Detector and Descriptor pair are listed below.
+### HARRIS Dectector
+| <img src="images/DD_HARRIS.png" width="800" height="350" /> | 
+|:--:| 
+| *HARRIS Detector with BRIEF, ORB, FREAK and SIFT Descriptor* |
+
+### FAST Dectector
+| <img src="images/DD_FAST.png" width="800" height="350" /> | 
+|:--:| 
+| *FAST Detector with BRIEF, ORB, FREAK and SIFT Descriptor* |
+
+### BRISK Dectector
+| <img src="images/DD_BRISK.png" width="800" height="350" /> | 
+|:--:| 
+| *BRISK Detector with BRIEF, ORB, FREAK and SIFT Descriptor* |
+
+### ORB Dectector
+| <img src="images/DD_ORB.png" width="800" height="350" /> | 
+|:--:| 
+| *ORB Detector with BRIEF, ORB, FREAK and SIFT Descriptor* |
+
+### AKAZE Dectector
+| <img src="images/DD_AKAZE.png" width="800" height="350" /> | 
+|:--:| 
+| *AKAZE Detector with AKAZE Descriptor* |
+
+### SIFT Dectector
+| <img src="images/DD_SIFT.png" width="800" height="350" /> | 
+|:--:| 
+| *SIFT Detector with BRIEF, FREAK and SIFT Descriptor* |
+
+### Summary
+By taking an average number of macthed descriptor and extraction time of all 10 frames, we can conclude the data together. As the data shown, combination of `BRISK Detector with BRIEF Descriptor` yield the best average keypoints matched and description extraction time.
+
+The Top-3 Detector&Descriptor, judge from both number of keypoints and extarction time is then:
+- 1st BRISK Detector with BRIEF Descriptor
+- 2nd BRISK  Detector with ORB Descriptor
+- 3rd BRISK  Detector with SIFT Descriptor
+
+| <img src="images/DD_Summary.png" width="800" height="350" /> | 
+|:--:| 
+| *BRISK Detector with BRIEF Descriptor yield the best average keypoints matched and description extraction time.* |
+
+From above table, BRISK Detector yeild highest number of keypoints matched, which we can infer that the keypoints and BRISK detect has both quantity and resilient cross frames. In term of Descriptor, both BRIEF and ORB took shortest time for descriptor extraction compared to another three.
+ 
